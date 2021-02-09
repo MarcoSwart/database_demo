@@ -4,27 +4,98 @@
 <head>
     <title>Drive API Quickstart</title>
     <meta charset="utf-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
 
 <body>
-    <p>Drive API Quickstart (Marco)</p>
+
+    <div class="container">
+        <div class="row">
+            <h3>Drive API Quickstart (Marco)</h3>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>Google Drive</h4>
+                <button class="btn btn-secondary btn-sm" id="list_files_button" style="display: none;">List
+                    Files</button>
+                <button class="btn btn-secondary  btn-sm mt-3" id="list_folders_button" style="display: none;">List
+                    Folders</button>
+                <div id="create_folder_container" style="background-color: lightgrey;padding: 10px;margin-top: 15px;">
+                    <h5>Create Folder</h5>
+                    <label class="form-label mt-1" id="foldername_label">Name:</label>
+                    <input id="folder_text" type="text" placeholder="Enter folder name" class="form-control" />
+                    <button class="btn btn-secondary  btn-sm mt-3" id="create_folder_button"
+                        style="display: none;">Create
+                        Folder</button>
+                </div>
+                <button class="btn btn-secondary  btn-sm" id="authorize_button"
+                    style="display: none;">Authorize</button>
+                <button class="btn btn-secondary  btn-sm mt-3" id="signout_button" style="display: none;">Sign
+                    Out</button>
+            </div>
+            <div id="google_sheets_column" class="col-sm-6">
+                <h4>Google Sheets</h4>
+                <button class="btn btn-secondary  btn-sm" id="list_sheets_button" style="display: none;">List
+                    Sheets</button>
+
+                <div style="background-color: lightgrey;padding: 10px;margin-top: 15px;">
+                    <h5>Create Spreadsheet</h5>
+                    <label class="form-label mt-1" id="spreadsheetname_label">Name:</label>
+                    <input id="sheet_text" type="text" placeholder="Enter spreadsheet name" class="form-control" />
+                    <button class="btn btn-secondary  btn-sm mt-3" id="create_sheet_button"
+                        style="display: none;">Create
+                        spreadsheet</button>
+                </div>
+
+
+
+
+                <div style="background-color: lightgrey;padding: 10px;margin-top: 15px;">
+                    <h5>Add Data</h5>
+                    <label class="form-label mt-1" id="spreadsheet_label">Spreadsheet:</label>
+                    <select id="spreadsheet_select" class="form-select">
+                        <option value="">Select a spreadsheet</option>
+                    </select>
+
+                    <label class="form-label mt-3" id="product_label">Product Name:</label>
+                    <input id="product_name_text" type="text" placeholder="Enter your product name"
+                        class="form-control" />
+
+
+
+                    <label class="form-label mt-3" id="purchased_label">Purchased:</label>
+                    <select id="purchased_select" class="form-select">
+                        <option value="">Select</option>
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                    </select>
+
+                    <button class="btn btn-secondary  btn-sm mt-3" id="add_to_spreadsheet_button"
+                        style="display: none;">Add
+                        to
+                        spreadsheet</button>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div id="output_container" class="col-sm-12">
+                <h3>Output</h3>
+                <pre id="content" style="white-space: pre-wrap;"></pre>
+            </div>
+        </div>
+    </div>
 
     <!--Add buttons to initiate auth sequence and sign out-->
-    <button id="authorize_button" style="display: none;">Authorize</button>
-    <button id="list_files_button" style="display: none;">List Files</button>
-    <button id="list_folders_button" style="display: none;margin: 10px 10px 0px 0px">List Folders</button>
-    <button id="list_sheets_button" style="display: none;margin: 10px 10px 0px 0px">List Sheets</button>
-    <div style="padding: 10px 10px 0px 0px;">
-        <input id="folder_text" type="text" placeholder="Enter folder name" />
-        <button id="create_folder_button" style="display: none;margin: 3px 0px 0px 0px">Create Folder</button>
-    </div>
-    <div style="padding: 10px 10px 10px 0px;">
-        <input id="sheet_text" type="text" placeholder="Enter spreadsheet name" />
-        <button id="create_sheet_button" style="display: none;margin: 3px 0px 0px 0px">Create spreadsheet</button>
-    </div>
-    <button id="signout_button" style="display: none;">Sign Out</button>
 
-    <pre id="content" style="white-space: pre-wrap;"></pre>
+
+
+
+
+
+
+
 
     <script src="scripts.js"></script>
 

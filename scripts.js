@@ -7,7 +7,7 @@ var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/res
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets';
+var SCOPES = 'https://www.googleapis.com/auth/drive';
 
 var authorizeButton = document.getElementById('authorize_button');
 var listFilesButton = document.getElementById('list_files_button');
@@ -17,7 +17,17 @@ var createFolderButton = document.getElementById('create_folder_button');
 var folderTextField = document.getElementById('folder_text');
 var createSheetButton = document.getElementById('create_sheet_button');
 var sheetTextField = document.getElementById('sheet_text');
+var addToSpreadsheetButton = document.getElementById('add_to_spreadsheet_button');
+var productNameTextField = document.getElementById('product_name_text');
+var spreadsheetLabel = document.getElementById('spreadsheet_label');
+var spreadsheetSelect = document.getElementById('spreadsheet_select');
+var purchasedLabel = document.getElementById('purchased_label');
+var purchasedSelect = document.getElementById('purchased_select');
+var googleSheetContainer = document.getElementById("google_sheets_column");
+var createFolderContainer = document.getElementById("create_folder_container");
+var outputContainer = document.getElementById("output_container");
 var signoutButton = document.getElementById('signout_button');
+
 
 /**
  *  On load, called to load the auth2 library and API client library.
@@ -49,6 +59,7 @@ function initClient() {
         listSheetsButton.onclick = listSheets;
         createFolderButton.onclick = createFolder;
         createSheetButton.onclick = createSpreadSheet;
+        addToSpreadsheetButton.onclick = addSpreadSheetData;
     }, function (error) {
         appendPre(JSON.stringify(error, null, 2));
     });
@@ -60,6 +71,7 @@ function initClient() {
  */
 function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
+        addSheetsToSelect();
         authorizeButton.style.display = 'none';
         listFilesButton.style.display = 'block';
         listFoldersButton.style.display = 'block';
@@ -69,7 +81,17 @@ function updateSigninStatus(isSignedIn) {
         folderTextField.style.display = 'block';
         sheetTextField.style.display = 'block';
         signoutButton.style.display = 'block';
+        addToSpreadsheetButton.style.display = 'block';
+        productNameTextField.style.display = 'block';
+        spreadsheetLabel.style.display = 'block';
+        spreadsheetSelect.style.display = 'block';
+        purchasedLabel.style.display = 'block';
+        purchasedSelect.style.display = 'block';
+        googleSheetContainer.style.display = 'block';
+        createFolderContainer.style.display = 'block';
+        outputContainer.style.display = 'block';
     } else {
+        document.getElementById('content').innerHTML = "";
         authorizeButton.style.display = 'block';
         listFilesButton.style.display = 'none';
         listFoldersButton.style.display = 'none';
@@ -79,6 +101,15 @@ function updateSigninStatus(isSignedIn) {
         signoutButton.style.display = 'none';
         folderTextField.style.display = 'none';
         sheetTextField.style.display = 'none';
+        addToSpreadsheetButton.style.display = 'none';
+        productNameTextField.style.display = 'none';
+        spreadsheetLabel.style.display = 'none';
+        spreadsheetSelect.style.display = 'none';
+        purchasedLabel.style.display = 'none';
+        purchasedSelect.style.display = 'none';
+        googleSheetContainer.style.display = 'none';
+        createFolderContainer.style.display = 'none';
+        outputContainer.style.display = 'none';
     }
 }
 
@@ -167,8 +198,8 @@ function listSheets() {
 
 function createFolder() {
     document.getElementById('content').innerHTML = "";
-    let folderName = document.getElementById("folder_text").value;
-    document.getElementById("folder_text").value = "";
+    let folderName = folderTextField.value;
+    folderTextField.value = "";
     gapi.client.request({
         path: 'https://www.googleapis.com/drive/v3/files',
         method: 'POST',
@@ -187,8 +218,8 @@ function createFolder() {
 
 function createSpreadSheet() {
     document.getElementById('content').innerHTML = "";
-    let sheetName = document.getElementById("sheet_text").value;
-    document.getElementById("sheet_text").value = "";
+    let sheetName = sheetTextField.value;
+    sheetTextField.value = "";
     gapi.client.request({
         path: 'https://sheets.googleapis.com/v4/spreadsheets',
         method: 'POST',
@@ -196,6 +227,46 @@ function createSpreadSheet() {
             properties: {
                 title: `${sheetName}`,
             }
+        }
+    }).then(function (response) {
+        addSheetsToSelect();
+    });
+
+}
+
+function addSheetsToSelect() {
+    let sheetSelect = spreadsheetSelect;
+    gapi.client.request({
+        path: "https://www.googleapis.com/drive/v3/files?q=mimeType = 'application/vnd.google-apps.spreadsheet'"
+    }).then(function (response) {
+        var files = response.result.files;
+        if (files && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                var option = document.createElement("option");
+                var file = files[i];
+                option.value = file.id;
+                option.text = file.name + ' (' + file.id + ')';
+                sheetSelect.add(option, sheetSelect[i + 1]);
+            }
+        }
+    });
+}
+
+function addSpreadSheetData() {
+    document.getElementById('content').innerHTML = "";
+    let spreadsheetId = spreadsheetSelect.value;
+    let productName = productNameTextField.value;
+    let purchase = purchasedSelect.value;
+    productNameTextField.value = "";
+    spreadsheetSelect.value = "";
+    purchasedSelect.value = "";
+    gapi.client.request({
+        path: `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1!A1:B1:append?valueInputOption=USER_ENTERED`,
+        method: 'POST',
+        body: {
+            values: [
+                [`${productName}`, purchase],
+            ],
         }
     }).then(function (response) {
 
