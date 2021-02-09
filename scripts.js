@@ -7,9 +7,13 @@ var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/res
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+var SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
 
 var authorizeButton = document.getElementById('authorize_button');
+var listFilesButton = document.getElementById('list_files_button');
+var listFoldersButton = document.getElementById('list_folders_button');
+var listSheetsButton = document.getElementById('list_sheets_button');
+var createFolderButton = document.getElementById('create_folder_button');
 var signoutButton = document.getElementById('signout_button');
 
 /**
@@ -37,6 +41,10 @@ function initClient() {
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
         authorizeButton.onclick = handleAuthClick;
         signoutButton.onclick = handleSignoutClick;
+        listFilesButton.onclick = listFiles;
+        listFoldersButton.onclick = listFolders;
+        listSheetsButton.onclick = listSheets;
+        createFolderButton.onclick = createFolder;
     }, function (error) {
         appendPre(JSON.stringify(error, null, 2));
     });
@@ -49,8 +57,11 @@ function initClient() {
 function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
         authorizeButton.style.display = 'none';
+        listFilesButton.style.display = 'block';
+        listFoldersButton.style.display = 'block';
+        listSheetsButton.style.display = 'block';
+        createFolderButton.style.display = 'block';
         signoutButton.style.display = 'block';
-        listFiles();
     } else {
         authorizeButton.style.display = 'block';
         signoutButton.style.display = 'none';
@@ -87,9 +98,9 @@ function appendPre(message) {
  * Print files.
  */
 function listFiles() {
-    gapi.client.drive.files.list({
-        'pageSize': 10,
-        'fields': "nextPageToken, files(id, name)"
+    document.getElementById('content').innerHTML = "";
+    gapi.client.request({
+        path: "https://www.googleapis.com/drive/v3/files?q=mimeType != 'application/vnd.google-apps.folder'"
     }).then(function (response) {
         appendPre('Files:');
         var files = response.result.files;
@@ -102,4 +113,60 @@ function listFiles() {
             appendPre('No files found.');
         }
     });
+}
+
+function listFolders() {
+    document.getElementById('content').innerHTML = "";
+    gapi.client.request({
+        path: "https://www.googleapis.com/drive/v3/files?q=mimeType = 'application/vnd.google-apps.folder'"
+    }).then(function (response) {
+        appendPre('Folders:');
+        var files = response.result.files;
+        if (files && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                appendPre(file.name + ' (' + file.id + ')');
+            }
+        } else {
+            appendPre('No files found.');
+        }
+    });
+}
+
+function listSheets() {
+    document.getElementById('content').innerHTML = "";
+    gapi.client.request({
+        path: "https://www.googleapis.com/drive/v3/files?q=mimeType = 'application/vnd.google-apps.spreadsheet'"
+    }).then(function (response) {
+        appendPre('Sheets:');
+        var files = response.result.files;
+        if (files && files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                appendPre(file.name + ' (' + file.id + ')');
+            }
+        } else {
+            appendPre('No files found.');
+        }
+    });
+}
+
+function createFolder() {
+    document.getElementById('content').innerHTML = "";
+    let folderName = document.getElementById("folder_text").value;
+    gapi.client.request({
+        path: 'https://www.googleapis.com/drive/v3/files',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+
+        },
+        body: {
+            name: `${folderName}`,
+            mimeType: "application/vnd.google-apps.folder",
+        }
+    }).then(function (response) {
+        // console.log(response)
+    });
+
 }
