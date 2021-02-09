@@ -7,13 +7,16 @@ var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/res
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
+var SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets';
 
 var authorizeButton = document.getElementById('authorize_button');
 var listFilesButton = document.getElementById('list_files_button');
 var listFoldersButton = document.getElementById('list_folders_button');
 var listSheetsButton = document.getElementById('list_sheets_button');
 var createFolderButton = document.getElementById('create_folder_button');
+var folderTextField = document.getElementById('folder_text');
+var createSheetButton = document.getElementById('create_sheet_button');
+var sheetTextField = document.getElementById('sheet_text');
 var signoutButton = document.getElementById('signout_button');
 
 /**
@@ -45,6 +48,7 @@ function initClient() {
         listFoldersButton.onclick = listFolders;
         listSheetsButton.onclick = listSheets;
         createFolderButton.onclick = createFolder;
+        createSheetButton.onclick = createSpreadSheet;
     }, function (error) {
         appendPre(JSON.stringify(error, null, 2));
     });
@@ -61,10 +65,20 @@ function updateSigninStatus(isSignedIn) {
         listFoldersButton.style.display = 'block';
         listSheetsButton.style.display = 'block';
         createFolderButton.style.display = 'block';
+        createSheetButton.style.display = 'block';
+        folderTextField.style.display = 'block';
+        sheetTextField.style.display = 'block';
         signoutButton.style.display = 'block';
     } else {
         authorizeButton.style.display = 'block';
+        listFilesButton.style.display = 'none';
+        listFoldersButton.style.display = 'none';
+        listSheetsButton.style.display = 'none';
+        createFolderButton.style.display = 'none';
+        createSheetButton.style.display = 'none';
         signoutButton.style.display = 'none';
+        folderTextField.style.display = 'none';
+        sheetTextField.style.display = 'none';
     }
 }
 
@@ -154,6 +168,7 @@ function listSheets() {
 function createFolder() {
     document.getElementById('content').innerHTML = "";
     let folderName = document.getElementById("folder_text").value;
+    document.getElementById("folder_text").value = "";
     gapi.client.request({
         path: 'https://www.googleapis.com/drive/v3/files',
         method: 'POST',
@@ -166,7 +181,24 @@ function createFolder() {
             mimeType: "application/vnd.google-apps.folder",
         }
     }).then(function (response) {
-        // console.log(response)
+    });
+
+}
+
+function createSpreadSheet() {
+    document.getElementById('content').innerHTML = "";
+    let sheetName = document.getElementById("sheet_text").value;
+    document.getElementById("sheet_text").value = "";
+    gapi.client.request({
+        path: 'https://sheets.googleapis.com/v4/spreadsheets',
+        method: 'POST',
+        body: {
+            properties: {
+                title: `${sheetName}`,
+            }
+        }
+    }).then(function (response) {
+
     });
 
 }

@@ -12,11 +12,15 @@
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" style="display: none;">Authorize</button>
     <button id="list_files_button" style="display: none;">List Files</button>
-    <button id="list_folders_button" style="display: none;">List Folders</button>
-    <button id="list_sheets_button" style="display: none;">List Sheets</button>
-    <div>
+    <button id="list_folders_button" style="display: none;margin: 10px 10px 0px 0px">List Folders</button>
+    <button id="list_sheets_button" style="display: none;margin: 10px 10px 0px 0px">List Sheets</button>
+    <div style="padding: 10px 10px 0px 0px;">
         <input id="folder_text" type="text" placeholder="Enter folder name" />
-        <button id="create_folder_button" style="display: none;">Create Folder</button>
+        <button id="create_folder_button" style="display: none;margin: 3px 0px 0px 0px">Create Folder</button>
+    </div>
+    <div style="padding: 10px 10px 10px 0px;">
+        <input id="sheet_text" type="text" placeholder="Enter spreadsheet name" />
+        <button id="create_sheet_button" style="display: none;margin: 3px 0px 0px 0px">Create spreadsheet</button>
     </div>
     <button id="signout_button" style="display: none;">Sign Out</button>
 
